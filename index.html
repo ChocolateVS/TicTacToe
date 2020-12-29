@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Title, Meta-data and links for css and favicon -->
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+        <link rel="icon" type="image/ico" href="favicon.ico">
+        <title>Sudoku</title>
+    </head>
+    <body>  
+       <center>
+           <h1 class="header">TIC TAC TOE</h1>
+           <br>
+           <span class="info" id="info"></span>
+       </center>
+       <!-- OPTIONS PANEL -->
+       <div class="container">
+            <!-- <div class="opDiv">
+                <div class="options" id="options">
+                    <!-- Options
+                    <input type="button" class="op" id="pressX" value="UNDO" onclick="doUndo()">
+                    <input type="button" class="op" id="pressX" value="REDO" onclick="doRedo()">
+                    <input type="button" class="op" id="pressX" value="CHECK" onclick="check(grid)">
+                    <input type="button" class="op" id="pressX" value="GENERATE" onclick="gen()">
+                    <input type="button" class="op" id="pressX" value="AUTO SOLVE" onclick="solve()">
+                    <input type="button" class="op" id="pressX" value="CLEAR GRID" onclick="clearGrid()">
+                    <select class="op" name="diff" id="diff">
+                      <option value="70">EASY</option>
+                      <option value="80">NORMAL</option>
+                      <option value="90">HARD</option>
+                      <option value="100">EXPERT</option>
+                    </select>
+                </div>
+            </div>-->
+            <div id="cross" class="cross">
+                <h1 class="pHead"> YOU </h1>
+            </div>
+            <!-- GRID -->
+            <div class="gridDiv">
+                <table class="sudoku">
+                    <!-- GRID LAYOUT -->
+                    <colgroup><col></colgroup>
+                    <colgroup><col></colgroup>
+                    <colgroup><col></colgroup>
+                    
+                    <tbody class="grid" id="grid">
+                      <tr class="row" id="row1">
+                          <td class="cell" id="cell1"><button class="input" id="1" onclick="sel(1)"><img id="img1"></button></td>
+                          <td class="cell" id="cell2"><button class="input" id="2" onclick="sel(2)"><img id="img2"></button></td>
+                          <td class="cell" id="cell3"><button class="input" id="3" onclick="sel(3)"><img id="img3"></button></td>
+                      </tr>
+                      <tr class="row" id="row2">
+                          <td class="cell" id="cell4"><button class="input" id="4" onclick="sel(4)"><img id="img4"></button></td>
+                          <td class="cell" id="cell5"><button class="input" id="5" onclick="sel(5)"><img id="img5"></button></td>
+                          <td class="cell" id="cell6"><button class="input" id="6" onclick="sel(6)"><img id="img6"></button></td>
+                      </tr>
+                      <tr class="row" id="row3">
+                          <td class="cell" id="cell7"><button class="input" id="7" onclick="sel(7)"><img id="img7"></button></td>
+                          <td class="cell" id="cell8"><button class="input" id="8" onclick="sel(8)"><img id="img8"></button></td>
+                          <td class="cell" id="cell9"><button class="input" id="9" onclick="sel(9)"><img id="img9"></button></td>
+                      </tr>                                       
+                    </tbody>
+                </table>
+            </div> 
+            <div id="circle" class="circle">
+                <h1 class="pHead" id="aiText"> AI </h1>
+            </div>
+        </div>
+        <!-- OUTPUT -->
+        <p class="gridStatus" id="stat"></p>
+    </body>
+    <!-- Script -->
+    <script src="grid.js"></script>
+    <script id="p" src="main.js"></script>
+</html>
