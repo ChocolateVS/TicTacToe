@@ -1,139 +1,173 @@
-function id(id) { return document.getElementById(id)}
-for (let i = 0; i < 5; i++) {
-    let cross = document.createElement("img");
-    let circle = document.createElement("img");
-    cross.setAttribute("src", "assets/images/cross.png");
-    circle.setAttribute("src", "assets/images/circle.png");
-    cross.setAttribute("class", "peice");
-    circle.setAttribute("class", "peice");
-    id("cross").appendChild(cross);
-    id("circle").appendChild(circle);
+function id(id) {return document.getElementById(id)}
+
+let grid = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+const player = "O";
+const ai = "X";
+let turn = player;
+var blocks = document.querySelectorAll('.block');
+blocks.forEach(e => {
+    e.addEventListener('mouseover', mouseOver);
+    e.addEventListener('mouseout', mouseOut);
+    e.addEventListener('mousedown', mouseDown);
+});
+
+function mouseOver(e) {
+    if (checkEmpty(e.target.id)) {
+        e.target.innerHTML = "O";
+    }
 }
 
-let turn;
-let turns = 0;
-let grid = {
-    rows:[["", "", ""], ["", "", ""], ["", "", ""]],
-    cols:[["", "", ""], ["", "", ""], ["", "", ""]]
-};
-
-let num = Math.round(Math.random());
-if (num == 0) {
-    console.log("Player starts");
-    id("info").innerHTML = "You Start";
-    var list = document.getElementById("circle");   
-    list.removeChild(list.childNodes[list.childNodes.length-1]);
-    turn = 0;
-}
-else {
-    console.log("AI starts");
-    id("info").innerHTML = "AI starts";
-    var list = document.getElementById("cross");   
-    list.removeChild(list.childNodes[list.childNodes.length-1]);
-    turn = 1;
+function mouseOut(e) {
+    if (checkEmpty(e.target.id)) {
+        e.target.innerHTML = "";
+    }
 }
 
-if (num == 1) {
-    ai();
-}
-
-function ai() {
-    let count = 0;
-    let c = setInterval(function() {
-        id("aiText").innerHTML += ".";
-        count++;
-        if (count == 3) {
-            clearInterval(c);
-            aiTurn();
+function mouseDown(e) {
+    if (checkEmpty(e.target.id) && turn == player) {
+        e.target.innerHTML = "O";
+        let int = e.target.id
+        grid[int.charAt(int.length - 1)] = "O";
+        if (checkWin(grid, player, 0)) {
+            alert(player + " Wins")
+            end(); 
         }
-    }, 100); 
-}
-function aiTurn() {
-    let avail = [];
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            if (grid.rows[i][j] == "") {
-                avail.push([i, j]);
-            }
-        }
-    }
-    //Decide which available position to play here: (random for now)
-    let pos = Math.floor(Math.random() * avail.length);
-    let a = avail[pos][0];
-    let b = avail[pos][1];
-    //console.log(a, b);
-    grid.rows[a][b] = "O";
-    grid.cols[b][a] = "O";
-    let cell = b + (3 * a) + 1;
-    //console.log(cell);
-    id("img" + cell).setAttribute("src", "assets/images/circle.png");
-    turns++;
-    if (turns == 9) {
-        console.log("GAMEOVER");
-        id("stat").innerHTML = "GAMEOVER";
-    }
-    if (!check()) {
-        var list = document.getElementById("circle");   
-        list.removeChild(list.childNodes[list.childNodes.length-1]);
-        if (turn == 1) turn = 0;
-        id("info").innerHTML = "Your Turn";
-        id("aiText").innerHTML = "AI";
-    }
-}
-function sel(cell) {
-    if (turn == 0) {
-        let col = (cell - 1) % 3;
-        let row = Math.floor((cell - 1) / 3);
-        if (grid.rows[row][col] == "") {
-            id("img" + cell).setAttribute("src", "assets/images/cross.png");
-            grid.rows[row][col] = "X";
-            grid.cols[col][row] = "X";
-            turns++;
-            if (turns == 9) {
-                console.log("GAMEOVER");
-                id("stat").innerHTML = "GAMEOVER";
-            }
-            if (!check()) {
-                var list = document.getElementById("cross");   
-                list.removeChild(list.childNodes[list.childNodes.length-1]);
-                if (turn != -1) {
-                    turn = 1;
-                    id("info").innerHTML = "AI TURN";
-                    ai();
-                }
-            }
+        else if (checkTie()) {
+            alert("Gameover - Tie");
+            end();
         }
         else {
-            console.log("UR A CHEATER GET OUTTA HERE");
-            id("stat").innerHTML = "You Cannot Do That You CHEATER";
+            turn = ai;
+            let chance = Math.floor(Math.random() * Math.floor(5));
+            let daBestMove;
+            if (chance <= 2) {
+                let empty = emptySquares();
+                daBestMove = empty[Math.floor(Math.random() * Math.floor(emptySquares.length))];
+                console.log(daBestMove);
+            }
+            else {
+                daBestMove = bestMove();  
+            }
+            aiTurn(daBestMove); 
         }
     }
 }
 
-function check() {
-    grid.rows.forEach(e => {
-       if(e[0] == e[1] && e[1] == e[2] && e[0] != "") {
-            if (e[0] == "X") id("stat").innerHTML = "PLAYER WINS - ROWS";
-            else id("stat").innerHTML = "AI WINS - ROWS";
-            turn = -1;
-            return true;
-       } 
-    });
-    grid.cols.forEach(e => {
-       if(e[0] == e[1] && e[1] == e[2] && e[0] != "") {
-            if (e[0] == "X") id("stat").innerHTML = "PLAYER WINS - COLS";
-            else id("stat").innerHTML = "AI WINS - COLS";
-            turn = -1;
-            return true;
-       } 
-    });
-    if (grid.rows[1][1] != "") {
-         if(grid.rows[0][0] == grid.rows[1][1] && grid.rows[1][1] == grid.rows[2][2] || grid.rows[0][2] == grid.rows[1][1] && grid.rows[1][1] == grid.rows[2][0]) {
-            if (grid.rows[1][1] == "X") id("stat").innerHTML = "PLAYER WINS - DIAGS";
-            else id("stat").innerHTML = "AI WINS - DIAGS";
-            turn = -1;
-            return true;
-        } 
+
+startGame();
+function startGame() {
+    turn = player;
+    grid = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    for (let i = 0; i < 9; i++) { id("block_" + i).innerHTML = "";}
+}
+
+function checkEmpty(index) {
+    let empty = emptySquares(); 
+    if (empty.includes(parseInt(index.charAt(index.length - 1)))) {
+        return true;
     }
     return false;
+}
+
+function emptySquares() {
+	return grid.filter(s => typeof s == 'number');
+}
+
+function checkTie() {
+    if (emptySquares().length == 0) {
+        return true;
+    }
+    return false;
+}
+
+function checkWin(board, play, type) {
+	let plays = board.reduce((a, e, i) =>
+		(e === play) ? a.concat(i) : a, []);
+	let gameWon = false;
+    let game = null;
+	for (let [index, win] of wc.entries()) {
+		if (win.every(elem => plays.indexOf(elem) > -1)) {
+			gameWon = true;
+            game = {index: index, player: play};
+			break;
+		}
+	}
+    if (gameWon && type == 0) {
+        return gameWon;  
+    }
+    else {
+        return game;
+    }
+}
+
+function bestMove() { 
+    return minimax(grid, ai).index;   
+}
+
+function minimax(newBoard, turn) {
+    var availSpots = emptySquares();
+    
+    if (checkWin(newBoard, player)) {
+        return {score: -10};
+    } else if (checkWin(newBoard, ai)) {
+        return {score: 10};
+    } else if (availSpots.length === 0) {
+        return {score: 0};
+    }
+    var moves = [];
+    for (var i = 0; i < availSpots.length; i++) {
+        var move = {};
+        move.index = newBoard[availSpots[i]];
+        newBoard[availSpots[i]] = turn;
+
+        if (turn === ai) {
+			var result = minimax(newBoard, player);
+			move.score = result.score;
+		} else {
+			var result = minimax(newBoard, ai);
+			move.score = result.score;
+		}
+		newBoard[availSpots[i]] = move.index;
+		moves.push(move);     
+    }
+    
+    var bestMove;
+	if(turn === ai) {
+		var bestScore = -10000;
+		for(var i = 0; i < moves.length; i++) {
+			if (moves[i].score > bestScore) {
+				bestScore = moves[i].score;
+				bestMove = i;
+			}
+		}
+	} else {
+		var bestScore = 10000;
+		for(var i = 0; i < moves.length; i++) {
+			if (moves[i].score < bestScore) {
+				bestScore = moves[i].score;
+				bestMove = i;
+			}
+		}
+	}
+	return moves[bestMove];
+}
+
+function aiTurn(move) {
+    grid[move] = "X";
+    id("block_" + move).innerHTML = "X";
+    if (checkWin(grid, ai, 0)) {
+        alert(ai + " Wins")
+        end(); 
+    }
+    else if (checkTie()) {
+        alert("Gameover - Tie");
+        end();
+    }
+    else {
+        turn = player;
+    }
+}
+
+function end() {
+    
 }
