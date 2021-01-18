@@ -40,7 +40,7 @@ function mouseDown(e) {
             turn = ai;
             let chance = Math.floor(Math.random() * Math.floor(5));
             let daBestMove;
-            if (chance <= 2) {
+            if (chance == 2) {
                 let empty = emptySquares();
                 daBestMove = empty[Math.floor(Math.random() * Math.floor(emptySquares.length))];
                 console.log(daBestMove);
